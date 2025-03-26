@@ -2,6 +2,7 @@
 
 **CleanedIn** helps you focus on what matters. By intelligently refining your feed, it highlights valuable insights while reducing distractions. Stay engaged with meaningful posts and protect your privacy. Get the best out of your network — on YOUR terms.
 
+[![Options](assets/options.png)](assets/options.png)
 ---
 
 ## ✨ Features
