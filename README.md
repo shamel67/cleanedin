@@ -20,6 +20,8 @@
 
 **Chromium**
 Works in Chrome and Brave (recommended).
+- on Github, click on the "<> Code" button and "Download ZIP", then unzip in a folder of your choice.
+- or do "npm install cleanedin" in a folder of your choice.
 
 - Type chrome://extensions in the Chrome URL bar and press enter.
 - Enable developer mode using the toggle on the right
