@@ -1,0 +1,18 @@
+{
+  "name": "cleanedin",
+  "version": "1.0.0",
+  "description": "Less clutter, more focus.",
+  "main": "content.js",
+  "scripts": {
+    "build": "zip -r cleanedin.zip manifest.json *.html *.css *.js img",
+    "package": "npm run build"
+  },
+  "keywords": [
+    "chrome-extension",
+    "linkedin",
+    "privacy",
+    "filter"
+  ],
+  "author": "Stéphane Hamel",
+  "license": "SEE LICENSE IN LICENSE"
+}
