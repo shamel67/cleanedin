@@ -1,0 +1,52 @@
+{
+  "manifest_version": 3,
+  "name": "CleanedIn - Less clutter, more focus.",
+  "author": "Stéphane Hamel",
+  "version": "0.4",
+  "description": "CleanedIn helps you focus on what matters. By intelligently refining your feed, it highlights valuable insights while reducing distractions. Stay engaged with meaningful posts and protect your privacy. Get the best out of your network — on YOUR terms.",
+  "homepage_url": "https://ko-fi.com/cleanedin",
+  "author": "Stéphane Hamel",
+  "permissions": ["scripting", "activeTab", "storage"],
+  "minimum_chrome_version": "133",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  },
+  "action": {
+      "default_icon": "img/cleanedin.png"
+  },
+  "icons": {
+      "16": "img/cleanedin.png",
+      "48": "img/cleanedin.png",
+      "128": "img/cleanedin.png"
+    },
+  "permissions": [
+      "storage",
+      "tabs",
+      "scripting"
+  ],
+  "host_permissions": [
+      "https://www.linkedin.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://www.linkedin.com/*"],
+      "js": ["privacy.js"],
+      "run_at": "document_start"
+    },
+    {
+      "matches": ["https://www.linkedin.com/*"],
+      "js": ["cssContains.js","settings.js", "content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["probe.js", "content.css"],
+      "matches": ["https://www.linkedin.com/*"]
+    }
+  ]
+}
