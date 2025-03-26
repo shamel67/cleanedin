@@ -6,12 +6,24 @@
 
 ## ✨ Features
 
-- Privacy feature: prevent LI from probing for the presence of other extensions
-- Content filtering based on advanced rules (Premium, ads, games, suggestions, etc.)
-- Highlight posts containing custom regex, using a color of your choice (unlimited number of rules)
+- Privacy: prevent LI from probing for the presence of other extensions
+- Privacy: strip tracking parameters from shared links
+- Master switch: turn off, visually tone down the noise, or hide it completely
+- Content filtering based on advanced rules (Premium, ads, news, games, suggestions, celebrations, etc.)
+- Highlight posts based on your own custom regex, using a color of your choice (unlimited number of rules)
 - Badge showing the "noise ratio" in your feed
 - Changing options immediately reflects in LI opened tabs without reloading
 - Clean, unobtrusive design
+
+---
+
+**Chromium**
+Works in Chrome and Brave (recommended).
+
+- Type chrome://extensions in the Chrome URL bar and press enter.
+- Enable developer mode using the toggle on the right
+- Click Load Unpacked on the left side of the screen.
+- Navigate to the location of the folder you unzipped, and select it.
 
 ---
 
@@ -54,4 +66,4 @@ Email: `shamel67@gmail.com`
 
 ---
 
-**Proudly made in Canada.**
+**Made with ❤️ in Canada 🇨🇦.**
