@@ -1,11 +1,11 @@
 {
   "name": "cleanedin",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Less clutter, more focus.",
   "main": "content.js",
   "scripts": {
     "sync": "node scripts/sync.js",
-    "build": "npm run sync && zip -r cleanedin-v$(node -p \"require('./package.json').version\").zip src/*",
+    "build": "npm run sync && rm -rf CleanedIn && mkdir CleanedIn && cp -R src/* CleanedIn && zip -r CleanedIn-v$(node -p \"require('./package.json').version\").zip CleanedIn && rm -rf CleanedIn",
     "push": "node scripts/push.js",
     "release": "npm run sync && npm run build && npm publish"
   },

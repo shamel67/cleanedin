@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CleanedIn Unit Tests</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background: #eee;
+        }
+        .fail { background: #ffcdd2; } /* Red for failed */
+    </style>
+    <script src="settings.js"></script>
+    <script src="cssContains.js"></script>
+</head>
+<body>
+    <h1>CleanedIn Unit Tests</h1>
+    <button onclick="runUnitTests()">Run Tests</button>
+    
+    <table id="resultsTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Selector</th>
+                <th>Base Selector</th>
+                <th>:has() Filters</th>
+                <th>:contains() Filters</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        function stringifyWithRegex(obj) {
+            return JSON.stringify(obj, (key, value) => {
+                if (value instanceof RegExp) {
+                    return value.toString(); // Convert regex to string
+                }
+                return value;
+            }, 2); // Pretty-print with indentation
+        }
+
+        function formatSelector(selector) {
+            let indentLevel = 0;
+            return selector
+                .replace(/:has\(/g, match => {
+                    indentLevel++;
+                    return `\n${"  ".repeat(indentLevel)}:has(`;
+                })
+                .replace(/:contains\(/g, match => {
+                    return `\n${"  ".repeat(indentLevel + 1)}:contains(`;
+                })
+                .replace(/\)/g, match => {
+                    let closing = ")";
+                    if (indentLevel > 0) {
+                        indentLevel--;
+                        closing = `\n${"  ".repeat(indentLevel)})`;
+                    }
+                    return closing;
+                });
+        }
+
+        function updateResultsTable() {
+            const tableBody = document.querySelector("#resultsTable tbody");
+            tableBody.innerHTML = ""; // Clear previous results
+
+            Object.values(window.unitTestResults).forEach(({ id, selector, baseSelector, hasFilters, containsFilters, matchCount, elements }) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${id}</td>
+                    <td><pre>${formatSelector(selector)}</pre></td>
+                    <td><pre>${formatSelector(baseSelector)}</pre></td>
+                    <td><pre>${stringifyWithRegex(hasFilters, null, 2)}</pre></td>
+                    <td><pre>${stringifyWithRegex(containsFilters, null, 2)}</pre></td>
+                `;
+                row.className = baseSelector === "Error" ? "failt" : "pass";
+                tableBody.appendChild(row);
+            });
+        }
+
+        function runUnitTests() {
+            window.unitTestResults = {}; // Reset global results
+            settingsGroups.forEach(group => {
+                group.settings.forEach(setting => {
+                    if (setting.selector) {
+                        try {
+                            let result = document.querySelectorAllContains(setting.selector, true);
+                            window.unitTestResults[setting.id] = {
+                                id: setting.id,
+                                selector: setting.selector,
+                                baseSelector: result.baseSelector,
+                                hasFilters: result.hasFilters,
+                                containsFilters: result.containsFilters
+                            };
+                        } catch (error) {
+                            window.unitTestResults[setting.id] = {
+                                id: setting.id,
+                                selector: setting.selector,
+                                baseSelector: "Error",
+                                hasFilters: "Error",
+                                containsFilters: "Error",
+                                error: error.message
+                            };
+                        }
+                    }
+                });
+            });
+            updateResultsTable();
+        }
+    </script>
+</body>
+</html>
