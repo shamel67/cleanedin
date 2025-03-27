@@ -1,0 +1,26 @@
+{
+  "name": "cleanedin",
+  "version": "1.0.2",
+  "description": "Less clutter, more focus.",
+  "main": "content.js",
+  "scripts": {
+    "sync": "node scripts/sync.js",
+    "build": "npm run sync && zip -r cleanedin-v$(node -p \"require('./package.json').version\").zip src/*",
+    "push": "node scripts/push.js",
+    "release": "npm run sync && npm run build && npm publish"
+  },
+  "files": [
+    "src/",
+    "LICENSE.txt",
+    "PRIVACY.md",
+    "README.md"
+  ],
+  "keywords": [
+    "chrome-extension",
+    "linkedin",
+    "privacy",
+    "filter"
+  ],
+  "author": "Stéphane Hamel",
+  "license": "SEE LICENSE IN LICENSE"
+}

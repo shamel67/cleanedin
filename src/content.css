@@ -1,0 +1,50 @@
+.CleanedInRemove { 
+    display: none !important; 
+}
+
+.CleanedIn { 
+    filter: grayscale(40%) brightness(85%) contrast(95%) sepia(20%) !important; 
+    opacity: 0.8 !important;
+}
+
+html.theme--dark .CleanedIn {
+    filter: grayscale(50%) brightness(45%) contrast(120%) sepia(30%) !important;
+    opacity: 0.7 !important;
+}
+
+html.theme--dark .CleanedIn * { 
+    background-color: #222 !important;
+    color: #999 !important;
+}
+
+.CleanedInHighlight { 
+    filter: grayscale(30%) brightness(95%) contrast(85%) !important;
+    border: 2px solid rgba(0, 120, 212, 0.3) !important;
+    box-shadow: 0 0 10px rgba(0, 120, 212, 0.15) !important;
+}
+
+html.theme--dark .CleanedInHighlight {
+    filter: grayscale(40%) brightness(60%) contrast(110%) !important;
+    border-color: rgba(0, 180, 255, 0.5) !important;
+    box-shadow: 0 0 15px rgba(0, 180, 255, 0.2) !important;
+}
+
+.CleanedInCustom {
+  border-radius: var(--corner-radius-medium, 6px) !important;
+  overflow: hidden;
+  border: 2px solid currentColor !important;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, currentColor 10%, transparent),
+    transparent
+  ) !important;
+  color: var(--custom-border-color, #D32727); /* used as currentColor base */
+  text-shadow: 0 0 3px rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Dark Mode */
+html.theme--dark .CleanedInCustom {
+    border: 2px solid var(--custom-border-color-dark, #888) !important;
+    background: linear-gradient(90deg, rgba(0, 180, 255, 0, 0.2), transparent) !important;
+    text-shadow: 0px 0px 4px rgba(255, 255, 255, 1) !important;
+}

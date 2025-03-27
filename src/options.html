@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CleanedIn Settings</title>
+    <link rel="stylesheet" href="options.css">
+</head>
+<body>
+
+    <p id="description">CleanedIn helps you focus on what matters most. By intelligently refining your LinkedIn feed, it surfaces valuable content and filters out distractions. Stay engaged with meaningful posts, protect your privacy, and get the best out of your network — on YOUR terms.</p>
+    <div id="authorRow">
+        <div>
+            a tool by <a href="https://www.linkedin.com/in/shamel/" target="_blank">Stéphane Hamel</a><br/>
+            Proudly Canadian <span id="canadaFlag">🇨🇦</span>
+        </div>
+        <a id="buyCoffee" href="https://ko-fi.com/shamel" target="_blank">
+            <img src="img/kofi6.png" alt="Buy Me a Coffee">
+        </a>
+    </div>
+
+    <div class="settings-group">
+        <div class="setting-item">
+            <div class="slider-container">
+                <div id="cleanedInIcons">
+                    <span class="slider-icon" data-value="0"></span>
+                    <span class="slider-icon" data-value="1">☑️</span>
+                    <span class="slider-icon" data-value="2">🛑</span>
+                </div>
+                <div class="slider-track"></div>
+                <input type="range" id="cleanedIn" min="0" max="2" step="1" aria-label="CleanedIn Mode">
+                <div id="cleanedInLabels">
+                    <span class="slider-label" data-value="0">Off</span>
+                    <span class="slider-label" data-value="1">Normal</span>
+                    <span class="slider-label" data-value="2">Extreme</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="modeMessages">
+            <div id="offMessage" class="mode-message">CleanedIn is disabled. Enable it to refine your feed.</div>
+            <div id="normalMessage" class="mode-message">Checked elements will be visually toned down.</div>
+            <div id="extremeMessage" class="mode-message">
+                ⚠️ <strong>Warning:</strong> Please read 
+                <a href="https://www.linkedin.com/help/linkedin/answer/a1341387" target="_blank">LinkedIn's Terms of Service</a>
+                before enabling this feature.<br>
+                Checked elements will be hidden<br/><small> (except Custom Filters)</small>
+            </div>
+        </div>
+    </div>
+    <div id="refreshMessage" class="settings-group">
+        <div class="modeMessages">
+            <div class="mode-message extremeMessage">New install or update: don't forget to refresh your LinkedIn feed.</div>
+        </div>
+    </div>
+
+    <div id="settingsContainer"></div>
+
+    <script src="options.js" defer></script>
+</body>
+</html>

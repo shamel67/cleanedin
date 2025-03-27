@@ -1,0 +1,60 @@
+{
+  "manifest_version": 3,
+  "name": "CleanedIn - Less clutter, more focus.",
+  "author": "Stéphane Hamel",
+  "version": "1.0.2",
+  "description": "Clear the clutter from your LinkedIn feed. Stay focused on meaningful posts, real connections, and what truly matters to you.",
+  "homepage_url": "https://github.com/shamel67/cleanedin",
+  "minimum_chrome_version": "133",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  },
+  "action": {
+    "default_icon": "img/cleanedin.png"
+  },
+  "icons": {
+    "16": "img/cleanedin.png",
+    "48": "img/cleanedin.png",
+    "128": "img/cleanedin.png"
+  },
+  "permissions": [
+    "storage"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.linkedin.com/*"
+      ],
+      "js": [
+        "privacy.js"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "https://www.linkedin.com/*"
+      ],
+      "js": [
+        "cssContains.js",
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "probe.js",
+        "content.css",
+        "settings/*.json"
+      ],
+      "matches": [
+        "https://www.linkedin.com/*"
+      ]
+    }
+  ]
+}
