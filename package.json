@@ -1,6 +1,6 @@
 {
   "name": "cleanedin",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Less clutter, more focus.",
   "main": "background.js",
   "publishConfig": {
