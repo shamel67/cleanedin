@@ -1,25 +1,30 @@
 # CleanedIn
 
-**CleanedIn** helps you focus on what matters. By intelligently refining your feed, it highlights valuable insights while reducing distractions. Stay engaged with meaningful posts and protect your privacy. Get the best out of your network — on YOUR terms.
+**CleanedIn** helps you focus on what matters. By intelligently refining your LinkedIn feed, it highlights valuable insights while reducing distractions. Stay engaged with meaningful posts and protect your privacy. Get the best out of your network — on YOUR terms.
 
 [![Options](assets/options.png)](assets/options.png)
 ---
 
 ## ✨ Features
 
-- Privacy: prevent LI from probing for the presence of other extensions
+- Filter AI-generated posts (experimental)
+- Privacy: prevent LinkedIn from probing for the presence of other extensions
 - Privacy: strip tracking parameters from shared links
 - Master switch: turn off, visually tone down the noise, or hide it completely
 - Content filtering based on advanced rules (Premium, ads, news, games, suggestions, celebrations, etc.)
 - Highlight posts based on your own custom regex, using a color of your choice (unlimited number of rules)
 - Badge showing the "noise ratio" in your feed
-- Changing options immediately reflects in LI opened tabs without reloading
+- Changing options immediately reflects in LinkedIn opened tabs without reloading
 - Clean, unobtrusive design
 
 ---
 
-## 💾 Installation**
+## 💾 Installation
 Works in Chrome and Brave (recommended).
+
+Get it directly from the [Chrome Web Store](https://chromewebstore.google.com/detail/cleanedin-less-clutter-mo/cnificnjkdipoboaofmfkdnefmieihpf) and get updates automatically.
+
+Development install:
 - on Github, click on the "<> Code" button and "Download ZIP", then unzip in a folder of your choice.
 - or do "npm install cleanedin" in a folder of your choice.
 

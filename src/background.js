@@ -22,12 +22,16 @@ chrome.action.onClicked.addListener(() => {
 const extensionTitle = chrome.runtime.getManifest().name;
 
 // Listen for messages (e.g., badge update)
-chrome.runtime.onMessage.addListener((message) => {
+chrome.runtime.onMessage.addListener((msg, sender) => {
+    if (msg.type !== "updateBadge") return;
+
     // Update the action badge and tooltip
-    if (message.type === "updateBadge") {
-        chrome.action.setBadgeText(message.text);
+    const tabId = sender.tab?.id;
+    if (tabId !== undefined) {
+        const text = msg.text;
+        chrome.action.setBadgeText({ tabId, text});
         chrome.action.setTitle({
-            title: `${extensionTitle} \nRatio of noise in your feed: ${message.text}`
+            title: `${extensionTitle} \nRatio of noise in your feed: ${text}`
         });
     }
 });

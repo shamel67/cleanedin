@@ -1,6 +1,6 @@
 [
     {
-        "group": "Privacy",
+        "group": "Privacy & Bots",
         "settings": [
             {
                 "id": "probing",
@@ -11,6 +11,11 @@
                 "id": "links",
                 "label": "Strip tracker from copied links",
                 "status": "true"
+            },
+            {
+                "id": "ai",
+                "label": "<strong><i>New!</i></strong> Detect AI posts.",
+                "class": "CleanedInAI"
             }
         ]
     },

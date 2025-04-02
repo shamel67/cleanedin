@@ -5,9 +5,6 @@
  * external scripts via `fetch()`. If a request attempts to access 
  * `chrome-extension://` URLs, it is intercepted and blocked with a 
  * 403 Forbidden response.
- * 
- * This script is injected early into the page to override `window.fetch` 
- * in a secure and idempotent manner.
  */
 
 (() => {
@@ -36,11 +33,5 @@
         return originalFetch.apply(window, arguments);
     }
 
-    // Lock down `window.fetch` with the override
-    Object.defineProperty(window, "fetch", {
-        configurable: false,
-        enumerable: false,
-        writable: false,
-        value: blockedFetch
-    });
+    window.fetch = blockedFetch;
 })();

@@ -29,6 +29,19 @@ html.theme--dark .CleanedInHighlight {
     box-shadow: 0 0 15px rgba(0, 180, 255, 0.2) !important;
 }
 
+.CleanedInAI {
+    filter: grayscale(30%) brightness(95%) contrast(85%) !important;
+    border: 2px solid rgba(255, 165, 0, 0.4) !important; /* soft amber/orange */
+    box-shadow: 0 0 10px rgba(255, 165, 0, 0.2) !important;
+    opacity: 0.85 !important;
+}
+
+html.theme--dark .CleanedInAI {
+    filter: grayscale(40%) brightness(60%) contrast(110%) !important;
+    border-color: rgba(255, 140, 0, 0.5) !important; /* darker orange for contrast in dark mode */
+    box-shadow: 0 0 15px rgba(255, 140, 0, 0.25) !important;
+}
+
 .CleanedInCustom {
   border-radius: var(--corner-radius-medium, 6px) !important;
   overflow: hidden;

@@ -13,16 +13,13 @@ chrome.storage.local.get(["cleanedIn", "probing"], (options) => {
     const { cleanedIn, probing } = options;
 
     // Only inject if both extension and probing protection are enabled
-    if (cleanedIn && probing) {
+    if (cleanedIn && probing.status) {
         const scriptElement = document.createElement("script");
         scriptElement.src = chrome.runtime.getURL("probe.js");
         scriptElement.type = "application/javascript";
-        scriptElement.async = false; // Ensure sync execution
-
-        // Append to document root so it executes in page context
+        scriptElement.async = false;
         document.documentElement.appendChild(scriptElement);
-
-        // Cleanup after execution
         scriptElement.onload = () => scriptElement.remove();
+        console.info("probing prevention");
     }
 });
