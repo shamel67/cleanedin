@@ -15,84 +15,98 @@
 /**
  * Extended querySelectorAll with :contains() and :has() support.
  * 
- * @param {string} selector - The selector string including optional :contains or :has
+ * @param {string} selectors - The selector string or an array of selectors including optional :contains or :has
  * @param {boolean} debug - Whether to return debug information
  * @returns {NodeList|Object} - Matching elements or debug details
  */
-function querySelectorAllContains(selector, debug = false) {
-    // Fast path: no :contains(), use native
-    if (!selector.includes(':contains(')) {
-        if (debug) return {
-            elements: this.querySelectorAll(selector),
-            baseSelector: selector,
-            hasFilters: [],
-            containsFilters: []
-        };
-        return this.querySelectorAll(selector);
-    }
+function querySelectorAllContains(selectors, debug = false) {
+    const selectorArray = Array.isArray(selectors) ? selectors : [selectors];
+    let allElements = [];
+    let allDebugInfo = [];
 
-    const hasFilters = [];
-    const containsFilters = [];
+    for (let selector of selectorArray) {
+        // Fast path: no :contains(), use native
+        if (!selector.includes(':contains(')) {
+            const result = this.querySelectorAll(selector);
+            if (debug) {
+                allDebugInfo.push({
+                    selector,
+                    elements: result,
+                    baseSelector: selector,
+                    hasFilters: [],
+                    containsFilters: []
+                });
+            } else {
+                allElements.push(...result);
+            }
+            continue;
+        }
 
-    // Match :has(child:contains(...))
-    const hasRegex = /:has\(((?:[^()]*?:contains\((["'/])(?:\\.|(?!\2)[^\\])*\2\)[^()]*)+)\)/gi;
+        const hasFilters = [];
+        const containsFilters = [];
 
-    // Match :contains("string") or :contains(/regex/)
-    const containsRegex = /:contains\(\s*(["'/])((?:\\.|(?!\1)[^\\])*)\1\s*\)/g;
+        const hasRegex = /:has\(((?:[^()]*?:contains\((["'/])(?:\\.|(?!\2)[^\\])*\2(?:[a-z]*)\)[^()]*)+)\)/gi;
+        const containsRegex = /:contains\(\s*(["'/])((?:\\.|(?!\1)[^\\])*)\1([a-z]*)\s*\)/ig;
 
-    let baseSelector = selector;
+        let baseSelector = selector;
 
-    // Step 1: Extract :has(...) with :contains(...) inside
-    baseSelector = baseSelector.replace(hasRegex, (match, innerSelector) => {
-        let filtered = innerSelector;
-
-        const matches = [...innerSelector.matchAll(containsRegex)];
-        matches.forEach(m => {
-            const subSelector = filtered.split(":contains(")[0].trim();
-            const regex = new RegExp(m[2]);
-            hasFilters.push({ subSelector, regex });
-
-            filtered = filtered.replace(m[0], '').trim(); // strip :contains
+        baseSelector = baseSelector.replace(hasRegex, (match, innerSelectors) => {
+            // Split multiple inner selectors ...
+            let filtered = innerSelectors;
+            const innerRegexMatches = [...innerSelectors.matchAll(containsRegex)];
+            innerRegexMatches.forEach(m => {
+                const quote = m[1];
+                const content = m[2];
+                const flags = m[3] || '';
+                hasFilters.push({
+                    subSelector: filtered.replace(m[0], '').trim(),
+                    regex: new RegExp(content, quote === '/' ? flags : '')
+                });
+                filtered = filtered.replace(m[0], '').trim();
+            });
+            return `:has(${filtered})`;
         });
 
-        return `:has(${filtered})`; // keep :has, cleaned
-    });
+        baseSelector = baseSelector.replace(containsRegex, (match, quote, content, flags) => {
+            containsFilters.push(new RegExp(content, quote === '/' ? (flags || '') : ''));
+            return '';
+        }).trim();
 
-    // Step 2: Extract standalone :contains()
-    baseSelector = baseSelector.replace(containsRegex, (match, quote, content) => {
-        containsFilters.push(new RegExp(content));
-        return '';
-    }).trim();
+        let elements = this.querySelectorAll(baseSelector);
 
-    // Step 3: Run native querySelectorAll on the cleaned selector
-    let elements = this.querySelectorAll(baseSelector);
+        if (hasFilters.length > 0) {
+            elements = [...elements].filter(el =>
+                hasFilters.some(({ subSelector, regex }) =>
+                    [...el.querySelectorAll(subSelector)].some(inner => regex.test(inner.innerText))
+                )
+            );
+        }
 
-    // Step 4: Filter by :has() content
-    if (hasFilters.length > 0) {
-        elements = [...elements].filter(el =>
-            hasFilters.some(({ subSelector, regex }) =>
-                [...el.querySelectorAll(subSelector)].some(inner => regex.test(inner.innerText))
-            )
-        );
-    }
+        if (containsFilters.length > 0) {
+            elements = [...elements].filter(el =>
+                containsFilters.some(regex => regex.test(el.innerText))
+            );
+        }
 
-    // Step 5: Filter by standalone :contains()
-    if (containsFilters.length > 0) {
-        elements = [...elements].filter(el =>
-            containsFilters.some(regex => regex.test(el.innerText))
-        );
+        if (debug) {
+            allDebugInfo.push({
+                selector,
+                elements,
+                baseSelector,
+                hasFilters,
+                containsFilters
+            });
+        } else {
+            allElements.push(...elements);
+        }
     }
 
     if (debug) {
-        return {
-            elements,
-            baseSelector,
-            hasFilters,
-            containsFilters
-        };
+        return allDebugInfo;
     }
 
-    return elements;
+    // Remove duplicates
+    return [...new Set(allElements)];
 }
 
 // Add method to both Document and Element prototypes

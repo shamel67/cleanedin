@@ -6,11 +6,10 @@
 
 // Handle installation or update of the extension
 chrome.runtime.onInstalled.addListener(async (details) => {
-    console.log(`CleanedIn ${details.reason}`);
-    //await chrome.storage.local.clear();
-
-    // Automatically open the options page after install/update
-    chrome.runtime.openOptionsPage();
+    // Automatically open the options page after install or extension update
+    if (details.reason === 'install' || details.reason === 'update') {
+        chrome.runtime.openOptionsPage();
+    }
 });
 
 // Open the options page when the extension icon is clicked
@@ -23,15 +22,26 @@ const extensionTitle = chrome.runtime.getManifest().name;
 
 // Listen for messages (e.g., badge update)
 chrome.runtime.onMessage.addListener((msg, sender) => {
-    if (msg.type !== "updateBadge") return;
+    const tabId = sender.tab?.id;
+    if (tabId === undefined) return;
+
+    if (msg.type === "linkedinFocus") {
+        chrome.action.setIcon({
+            tabId,
+            path: msg.isActive ? "img/cleanedin.png" : "img/cleanedin-inactive.png"
+        });
+        return;
+    }
 
     // Update the action badge and tooltip
-    const tabId = sender.tab?.id;
-    if (tabId !== undefined) {
+    if (msg.type === "updateBadge") {
         const text = msg.text;
-        chrome.action.setBadgeText({ tabId, text});
+        chrome.action.setBadgeText({ tabId, text });
         chrome.action.setTitle({
-            title: `${extensionTitle} \nRatio of noise in your feed: ${text}`
+            tabId,
+            title: text
+                ? `${extensionTitle}\nRatio of noise in your feed: ${text}`
+                : extensionTitle
         });
     }
 });

@@ -6,46 +6,77 @@
  * syncs changes with chrome.storage, and provides validation.
  */
 
-/**
- * @file en.js
- * @description
- * settingsGroups holds the status configuration for the extension.
- * Each group represents a category (Privacy, Recommendations, etc.)
- * and contains an array of settings. Each setting may define:
- * - id: a unique identifier for the setting.
- * - label: the text (or HTML) shown to the user.
- * - selector: an alternative CSS selector for sidebar items.
- * - class: a special CSS class to add when the setting is enabled.
- * - color: the color of custom selectors
- * - status: the status value (true/false) if not present in storage.
- */
-
 // Stores all current settings (standard and custom)
 let globalOptions = {};
 let settingsGroups = [];
 
-fetch(chrome.runtime.getURL(`settings/en.json`))
-  .then(res => res.json())
-  .then(data => {
-    settingsGroups = data;
+/**
+ * Migrate legacy stored values to current format.
+ * Runs once on startup; writes corrections back to storage if needed.
+ *  - Converts status:"true" (string) → true (boolean)
+ *  - Maps cleanedIn:2 (deprecated Extreme mode) → 1 (Normal mode)
+ * @param {Object} stored - Raw value from chrome.storage.local
+ * @returns {Promise<Object>} Normalized options object
+ */
+function migrateStoredOptions(stored) {
+    const patches = {};
+    const removals = [];
 
-    // Load saved options from chrome.storage
-    chrome.storage.local.get(null, (storedOptions) => {
-      globalOptions = storedOptions;
-      Object.keys(storedOptions).length === 0
-        ? initializeDefaults()
-        : initializeSettings();
+    // Remove legacy master toggle key (CleanedIn is now always active)
+    if ('cleanedIn' in stored) {
+        removals.push('cleanedIn');
+    }
+
+    // Normalize any setting whose status is the string "true" or "false"
+    Object.entries(stored).forEach(([id, value]) => {
+        if (id === "cleanedIn" || typeof value !== "object" || value === null) return;
+        if (value.status === "true" || value.status === "false") {
+            patches[id] = { ...value, status: value.status === "true" };
+        }
     });
-  })
-  .catch(err => {
-    console.error("Failed to load localized settings:", err);
-  });
+
+    const hasWork = Object.keys(patches).length > 0 || removals.length > 0;
+    if (!hasWork) return Promise.resolve(stored);
+
+    return new Promise(resolve => {
+        const apply = () => {
+            const normalized = { ...stored, ...patches };
+            removals.forEach(k => delete normalized[k]);
+            resolve(normalized);
+        };
+        const afterSet = removals.length > 0
+            ? () => chrome.storage.local.remove(removals, apply)
+            : apply;
+        Object.keys(patches).length > 0
+            ? chrome.storage.local.set(patches, afterSet)
+            : afterSet();
+    });
+}
+
+fetch(chrome.runtime.getURL(`settings/en.json`))
+    .then(res => res.json())
+    .then(data => {
+        settingsGroups = data;
+
+        // Load saved options from chrome.storage, migrating legacy values first
+        chrome.storage.local.get(null, (storedOptions) => {
+            migrateStoredOptions(storedOptions).then(normalized => {
+                globalOptions = normalized;
+                Object.keys(normalized).length === 0
+                    ? initializeDefaults()
+                    : initializeSettings();
+            });
+        });
+    })
+    .catch(err => {
+        console.error("CleanedIn: Failed to load localized settings:", err);
+    });
 
 /**
- * Generate default options and persist to storage
+ * Generate default options and persist to storage.
  */
 function initializeDefaults() {
-    const defaultSettings = { cleanedIn: 1 };
+    const defaultSettings = {};
     document.getElementById("refreshMessage").style.display = "block";
 
     settingsGroups.forEach(group => {
@@ -62,17 +93,18 @@ function initializeDefaults() {
 }
 
 /**
- * Render the UI and wire up all elements and stored data
+ * Render the UI and wire up all elements and stored data.
  */
 function initializeSettings() {
-    const masterToggle = document.getElementById("cleanedIn");
     const container = document.getElementById("settingsContainer");
 
     // Render all settings groups
     settingsGroups.forEach(group => {
         const groupDiv = document.createElement("div");
         groupDiv.className = "settings-group";
-        if (["Recommendations", "Celebrations", "Engagement", "Reactions"].includes(group.group)) {
+
+        // Use the "collapsed" field from the JSON to drive initial state
+        if (group.collapsed) {
             groupDiv.classList.add("collapsed");
         }
 
@@ -100,7 +132,7 @@ function initializeSettings() {
         container.appendChild(groupDiv);
     });
 
-    // Re-render stored but undefined custom filters (not hardcoded in settings.js)
+    // Re-render stored but undefined custom filters (not hardcoded in settings.json)
     const definedSettingIds = new Set(
         settingsGroups.flatMap(group => group.settings.map(s => s.id))
     );
@@ -128,25 +160,17 @@ function initializeSettings() {
             createSettingUI(setting, customGroupDiv);
         });
 
-    // Master toggle slider
-    masterToggle.value = globalOptions.cleanedIn ?? 1;
-    updateSliderUI(parseInt(masterToggle.value));
-    updateCheckboxState(masterToggle.value);
-
-    masterToggle.addEventListener("input", function () {
-        const newValue = parseInt(this.value);
-        updateSliderUI(newValue);
-        updateCheckboxState(newValue);
-        chrome.storage.local.set({ cleanedIn: newValue });
-    });
 }
 
 /**
- * Render a single setting (checkbox, label, inputs for custom filters)
+ * Render a single setting (checkbox, label, inputs for custom filters).
+ * @param {Object} setting
+ * @param {Element} groupDiv
  */
 function createSettingUI(setting, groupDiv) {
+    const isCustom = setting.id.startsWith("custom_");
     const div = document.createElement("div");
-    div.className = "setting-item";
+    div.className = isCustom ? "custom-setting-item single-row" : "setting-item";
     div.id = `wrapper_${setting.id}`;
 
     const checkbox = document.createElement("input");
@@ -163,48 +187,57 @@ function createSettingUI(setting, groupDiv) {
 
         chrome.storage.local.set(updatedSetting);
 
-        if (setting.id.startsWith("custom_")) {
+        if (isCustom) {
             const index = setting.id.split("_")[1];
+            // Ensure inputs are correctly enabled/disabled when checkbox changes
             document.getElementById(`customRegex_${index}`).disabled = !checkbox.checked;
             document.getElementById(`customColor_${index}`).disabled = !checkbox.checked;
             validateAndSaveCustom(index);
         }
     });
 
-    div.appendChild(checkbox);
-
-    if (setting.id.startsWith("custom_")) {
+    if (isCustom) {
         const index = setting.id.split("_")[1];
 
+        // 1. Enable/Disable Checkbox
+        div.appendChild(checkbox);
+
+        // 2. Regex Input
         const textInput = document.createElement("input");
         textInput.type = "text";
         textInput.id = `customRegex_${index}`;
         textInput.value = extractRegexFromSelector(globalOptions[setting.id]?.selector || setting.selector || "");
-        textInput.disabled = !globalOptions[setting.id]?.status;
+        textInput.placeholder = "Regex pattern directly matches text...";
+        textInput.disabled = !globalOptions[setting.id]?.status; // disabled if unchecked
         textInput.addEventListener("input", () => validateAndSaveCustom(index));
         div.appendChild(textInput);
 
+        // 3. Color Picker
         const colorInput = document.createElement("input");
         colorInput.type = "color";
         colorInput.id = `customColor_${index}`;
         colorInput.value = globalOptions[setting.id]?.color || setting.color || "#D32727";
-        colorInput.disabled = !globalOptions[setting.id]?.status;
+        colorInput.disabled = !globalOptions[setting.id]?.status; // disabled if unchecked
+        colorInput.title = "Pick highlight tone (must be checked to edit)";
         colorInput.addEventListener("input", () => validateAndSaveCustom(index));
         div.appendChild(colorInput);
 
+        // 4. Remove Button
         const removeBtn = document.createElement("button");
-        removeBtn.textContent = "-";
+        removeBtn.innerHTML = "&#10006;"; // cross icon
         removeBtn.className = "remove-custom-button";
-        removeBtn.title = "Remove this custom filter";
+        removeBtn.title = "Delete filter";
         removeBtn.addEventListener("click", () => removeCustomFilter(setting.id));
         div.appendChild(removeBtn);
 
+        // Error message container (hidden by default)
         const error = document.createElement("div");
         error.id = `regexErrorMessage_${index}`;
         error.className = "regex-error";
         error.textContent = "Invalid regular expression.";
         div.appendChild(error);
     } else {
+        div.appendChild(checkbox);
         const label = document.createElement("label");
         label.htmlFor = setting.id;
         label.innerHTML = setting.label;
@@ -214,34 +247,11 @@ function createSettingUI(setting, groupDiv) {
     groupDiv.insertBefore(div, groupDiv.querySelector(".add-custom-button"));
 }
 
-/**
- * Update slider track and visibility of contextual messages
- */
-function updateSliderUI(value) {
-    const percent = (value / 2) * 100;
-    document.querySelector(".slider-track").style.background =
-        `linear-gradient(to right, #0073b1 ${percent}%, #ddd ${percent}%)`;
 
-    document.querySelectorAll(".slider-label, .slider-icon").forEach(el => {
-        el.classList.toggle("active", parseInt(el.dataset.value) === value);
-    });
-
-    document.getElementById("offMessage").style.display = value === 0 ? "block" : "none";
-    document.getElementById("normalMessage").style.display = value === 1 ? "block" : "none";
-    document.getElementById("extremeMessage").style.display = value === 2 ? "block" : "none";
-}
 
 /**
- * Enable or disable all setting checkboxes based on toggle state
- */
-function updateCheckboxState(value) {
-    document.querySelectorAll(".setting-item input[type='checkbox']").forEach(checkbox => {
-        checkbox.disabled = value === 0;
-    });
-}
-
-/**
- * Validate custom regex input, update UI, and persist
+ * Validate custom regex input, update UI, and persist.
+ * @param {string|number} index
  */
 function validateAndSaveCustom(index) {
     const regexInput = document.getElementById(`customRegex_${index}`);
@@ -252,19 +262,14 @@ function validateAndSaveCustom(index) {
         regexInput.classList.remove("invalid");
         error.style.display = "none";
 
-        if (!checkbox.checked) {
-            chrome.storage.local.set({ [`custom_${index}`]: { status: false } });
-            return;
-        }
-
         const color = document.getElementById(`customColor_${index}`);
         if (regexInput.value.trim()) new RegExp(regexInput.value); // test validity
 
         chrome.storage.local.set({
             [`custom_${index}`]: {
-                status: true,
+                status: checkbox.checked,
                 class: "CleanedInCustom",
-                selector: `div[data-id^="urn:li:"] div.feed-shared-update-v2:contains(/${regexInput.value.trim()}/)`,
+                selector: `div[data-id^="urn:li:"] div.feed-shared-update-v2:contains(/${regexInput.value.trim()}/i)`,
                 color: color.value
             }
         });
@@ -275,20 +280,25 @@ function validateAndSaveCustom(index) {
 }
 
 /**
- * Extract regex string from selector
+ * Extract regex string from a :contains() selector.
+ * @param {string} selector
+ * @returns {string}
  */
 function extractRegexFromSelector(selector) {
-    const match = selector?.match(/:contains\(\/([^/]*)\/\)/);
+    const match = selector?.match(/:contains\(\/([^/]*)\/(?:[a-z]*)\)/);
     return match ? match[1] : "";
 }
 
 /**
- * Create and save a new custom filter slot
+ * Create and save a new custom filter slot.
+ * @param {Element} groupDiv
  */
 function addNewCustomFilter(groupDiv) {
     chrome.storage.local.get(null, (data) => {
         const customKeys = Object.keys(data).filter(k => k.startsWith("custom_"));
-        const nextIndex = customKeys.length > 0 ? Math.max(...customKeys.map(k => parseInt(k.split("_")[1]))) + 1 : 1;
+        const nextIndex = customKeys.length > 0
+            ? Math.max(...customKeys.map(k => parseInt(k.split("_")[1]))) + 1
+            : 1;
         const newId = `custom_${nextIndex}`;
 
         const newSetting = {
@@ -307,7 +317,8 @@ function addNewCustomFilter(groupDiv) {
 }
 
 /**
- * Mark a custom filter for deletion and remove from UI
+ * Mark a custom filter for deletion and remove from UI.
+ * @param {string} id
  */
 function removeCustomFilter(id) {
     chrome.storage.local.get(id, (data) => {

@@ -8,18 +8,17 @@
  * If so, it injects a script tag referencing `probe.js` and removes it after execution.
  */
 
-// Retrieve CleanedIn state and probing protection setting
-chrome.storage.local.get(["cleanedIn", "probing"], (options) => {
-    const { cleanedIn, probing } = options;
+// Retrieve probing protection setting
+chrome.storage.local.get(["probing"], (options) => {
+    const { probing } = options;
 
-    // Only inject if both extension and probing protection are enabled
-    if (cleanedIn && probing.status) {
+    // Only inject if probing protection is enabled
+    if (probing?.status) {
         const scriptElement = document.createElement("script");
         scriptElement.src = chrome.runtime.getURL("probe.js");
         scriptElement.type = "application/javascript";
         scriptElement.async = false;
         document.documentElement.appendChild(scriptElement);
         scriptElement.onload = () => scriptElement.remove();
-        console.info("probing prevention");
     }
 });
