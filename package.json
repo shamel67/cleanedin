@@ -1,23 +1,31 @@
 {
-  "name": "cleanedin",
-  "version": "1.2.0",
-  "description": "Less clutter, more focus.",
+  "name": "feedsift",
+  "version": "1.4.0",
+  "description": "Find the signal. Skip the noise. FeedSift helps you hide distractions and focus your LinkedIn feed.",
   "main": "background.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shamel67/feedsift.git"
+  },
+  "bugs": {
+    "url": "https://github.com/shamel67/feedsift/issues"
+  },
+  "homepage": "https://github.com/shamel67/feedsift#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
     "sync": "node scripts/sync.js",
-    "build": "npm run sync && rm -rf CleanedIn && mkdir CleanedIn && cp -R src/* CleanedIn && zip -r CleanedIn-v$(node -p \"require('./package.json').version\").zip CleanedIn && rm -rf CleanedIn",
+    "build": "npm run sync && rm -rf dist feedsift-extension && mkdir -p dist && cp -R src feedsift-extension && zip -r dist/feedsift-v$npm_package_version.zip feedsift-extension -x \"*/.*\" \"*/__MACOSX/*\" && rm -rf feedsift-extension",
     "push": "node scripts/push.js",
     "release": "npm run build && npm publish",
-    "release-gh": "npm run release && gh release create v$(node -p \"require('./package.json').version\") --generate-notes",
+    "release-gh": "npm run release && gh release create v$npm_package_version --generate-notes",
     "version": "npm run sync && git add src/manifest.json",
     "deploy": "npm version patch && git push origin main --follow-tags"
   },
   "files": [
     "src/",
-    "LICENSE.txt",
+    "LICENSE.md",
     "PRIVACY.md",
     "README.md"
   ],
@@ -25,8 +33,9 @@
     "chrome-extension",
     "linkedin",
     "privacy",
-    "filter"
+    "filter",
+    "ai-detection"
   ],
-  "author": "Stéphane Hamel",
-  "license": "SEE LICENSE IN LICENSE"
+  "author": "Stéphane Hamel (Immeria Inc.)",
+  "license": "SEE LICENSE IN LICENSE.md"
 }

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FeedSift Settings</title>
+    <link rel="stylesheet" href="options.css">
+</head>
+
+<body>
+
+    <p id="description">FeedSift refines your feed, hide
+        distractions, protect your privacy, and stay focused on what matters to you.</p>
+    <div id="authorRow">
+        <div>
+            a tool by <a href="https://www.linkedin.com/in/shamel/" target="_blank">Stéphane Hamel</a>. Proudly Canadian
+            <span id="canadaFlag">🇨🇦</span>
+        </div>
+        <a id="buyCoffee" href="https://ko-fi.com/shamel" target="_blank">
+            <img src="../assets/img/kofi6.png" alt="Buy Me a Coffee">
+        </a>
+    </div>
+
+
+    <div id="settingsContainer"></div>
+
+    <!-- Developer Tools bar -->
+    <div id="devToolsBar">
+        <label id="inspectorToggleLabel"
+            title="Highlight matched elements on LinkedIn. Shows which rule matched each element — no content is hidden.">
+            <input type="checkbox" id="inspectorToggle">
+            Debug mode
+        </label>
+    </div>
+
+    <script src="options.js" type="module"></script>
+</body>
+
+</html>

@@ -1,0 +1,229 @@
+/* Normal mode: hide matched built-in noise filters completely. */
+.FeedSift {
+    display: none !important;
+}
+
+/* Custom filter highlight style */
+.FeedSiftHighlight {
+    --feedsift-accent: #0a66c2;
+    filter: none !important;
+    border-left: 3px solid var(--feedsift-accent) !important;
+}
+
+html.theme--dark .FeedSiftHighlight {
+    filter: none !important;
+    border-left-color: var(--feedsift-accent) !important;
+}
+
+/* Whole-post AI signal treatment */
+.FeedSiftAI-highlight {
+    --feedsift-ai-accent: #64748b;
+    border-left: 3px dotted var(--feedsift-ai-accent) !important;
+}
+
+html.theme--dark .FeedSiftAI-highlight {
+    --feedsift-ai-accent: #94a3b8;
+}
+
+/* AI-generated post indicator badge (positioned next to supplementary info) */
+.FeedSiftAI {
+    margin-left: 6px;
+    font-size: 10px;
+    padding: 1px 4px;
+    border-radius: 4px;
+    background-color: #0a66c2;
+    /* LinkedIn Blue */
+    color: white;
+    font-weight: bold;
+    vertical-align: middle;
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.2s;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.FeedSiftAI:hover {
+    background-color: #004182;
+    /* Darker blue */
+    transform: scale(1.1);
+}
+
+/* AI Detection Details Popup */
+.FeedSiftAI-popup {
+    position: absolute;
+    z-index: 10000;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(0, 0, 0, 0.05);
+    padding: 16px;
+    width: 260px;
+    font-size: 13px;
+    color: #333;
+    pointer-events: auto;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Fira Sans", Ubuntu, Oxygen, "Oxygen Sans", Cantarell, "Droid Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Lucida Grande", Helvetica, Arial, sans-serif;
+    animation: FeedSiftFadeIn 0.2s ease-out;
+}
+
+@keyframes FeedSiftFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+[data-theme="dark"] .FeedSiftAI-popup {
+    background: #1d2226;
+    color: #fff;
+    border-color: #38434f;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+.FeedSiftAI-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding-bottom: 8px;
+}
+
+[data-theme="dark"] .FeedSiftAI-popup-header {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.FeedSiftAI-score-badge {
+    background: #0a66c2;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 11px;
+}
+
+.FeedSiftAI-reasons-title {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #666;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+[data-theme="dark"] .FeedSiftAI-reasons-title {
+    color: #a0a0a0;
+}
+
+.FeedSiftAI-reasons-list {
+    margin: 0;
+    padding: 0 0 0 18px;
+    list-style-type: none;
+}
+
+.FeedSiftAI-reasons-list li {
+    margin-bottom: 6px;
+    position: relative;
+    line-height: 1.4;
+}
+
+.FeedSiftAI-reasons-list li::before {
+    content: "•";
+    color: #0a66c2;
+    font-weight: bold;
+    position: absolute;
+    left: -15px;
+}
+
+.FeedSiftAI-popup-footer {
+    margin-top: 12px;
+    font-size: 10px;
+    color: #999;
+    font-style: italic;
+    text-align: right;
+}
+
+/* Custom regex filter highlight style */
+.FeedSiftCustom {
+    --feedsift-accent: #D32727;
+    border-radius: var(--corner-radius-medium, 6px) !important;
+    overflow: hidden;
+    border-left: 3px solid var(--feedsift-accent) !important;
+}
+
+html.theme--dark .FeedSiftCustom {
+    border-left-color: var(--feedsift-accent) !important;
+}
+
+/* ── Inspector / Debug Mode ─────────────────────────────────────────────── */
+
+/* Pulsing outline on every matched element */
+.FeedSiftInspect {
+    outline: 2px dashed #f59e0b !important;
+    outline-offset: 2px !important;
+    position: relative !important;
+    animation: FeedSiftInspectPulse 1.8s ease-in-out infinite !important;
+    /* Override the normal dim so it's still readable */
+    filter: none !important;
+    opacity: 1 !important;
+}
+
+.FeedSiftInspectCustom {
+    border-left: 3px solid var(--feedsift-accent) !important;
+}
+
+@keyframes FeedSiftInspectPulse {
+
+    0%,
+    100% {
+        outline-color: #f59e0b;
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
+    }
+
+    50% {
+        outline-color: #d97706;
+        box-shadow: 0 0 0 6px rgba(245, 158, 11, 0);
+    }
+}
+
+/* Label chip – anchored to top-left of each inspected element */
+.FeedSiftInspect-label {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    z-index: 99999 !important;
+    background: #f59e0b !important;
+    color: #1c1917 !important;
+    font: 600 10px / 1.2 "Menlo", "Monaco", "Consolas", monospace !important;
+    padding: 4px 10px !important;
+    border-radius: 0 0 8px 0 !important;
+    /* Premium "tucked-in" corner */
+    pointer-events: none !important;
+    max-width: 350px !important;
+    overflow-wrap: break-word !important;
+    white-space: normal !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    letter-spacing: 0.3px !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+
+    /* Hidden by default to avoid obscuring content */
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: translateY(-4px) !important;
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s 0.2s !important;
+}
+
+/* Reveal after "long enough" hover (800ms) */
+.FeedSiftInspect:hover .FeedSiftInspect-label {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) !important;
+    transition: opacity 0.3s ease 0.8s, transform 0.3s ease 0.8s, visibility 0s 0.8s !important;
+}

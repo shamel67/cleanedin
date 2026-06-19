@@ -1,6 +1,7 @@
+
 /**
- * @file background.js
- * @description Background service worker for the CleanedIn Chrome extension.
+ * @file service_worker.js
+ * @description Background service worker for the FeedSift Chrome extension.
  * Handles installation, badge updates, and extension UI events.
  */
 
@@ -28,7 +29,7 @@ chrome.runtime.onMessage.addListener((msg, sender) => {
     if (msg.type === "linkedinFocus") {
         chrome.action.setIcon({
             tabId,
-            path: msg.isActive ? "img/cleanedin.png" : "img/cleanedin-inactive.png"
+            path: msg.isActive ? "/assets/img/feedsift.png" : "/assets/img/feedsift-inactive.png"
         });
         return;
     }

@@ -1,28 +1,30 @@
 {
   "manifest_version": 3,
-  "name": "CleanedIn - Less clutter, more focus.",
+  "name": "FeedSift - Find the signal. Skip the noise.",
   "author": "Immeria Inc. (Stéphane Hamel)",
-  "version": "1.3.0",
-  "description": "Clear the clutter from your LinkedIn feed. Stay focused on meaningful posts, real connections, and what truly matters to you.",
-  "homepage_url": "https://github.com/shamel67/cleanedin",
-  "minimum_chrome_version": "133",
+  "version": "1.4.0",
+  "description": "Find the signal. Skip the noise. FeedSift helps you hide distractions and focus your feed.",
+  "homepage_url": "https://github.com/shamel67/feedsift",
+  "minimum_chrome_version": "149",
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background/service_worker.js",
+    "type": "module"
   },
   "options_ui": {
-    "page": "options.html",
+    "page": "options/options.html",
     "open_in_tab": false
   },
   "action": {
-    "default_icon": "img/cleanedin.png"
+    "default_icon": "assets/img/feedsift.png"
   },
   "icons": {
-    "16": "img/cleanedin.png",
-    "48": "img/cleanedin.png",
-    "128": "img/cleanedin.png"
+    "16": "assets/img/feedsift.png",
+    "48": "assets/img/feedsift.png",
+    "128": "assets/img/feedsift.png"
   },
   "permissions": [
-    "storage"
+    "storage",
+    "clipboardWrite"
   ],
   "content_scripts": [
     {
@@ -30,7 +32,17 @@
         "https://www.linkedin.com/*"
       ],
       "js": [
-        "privacy.js"
+        "content/probe.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "https://www.linkedin.com/*"
+      ],
+      "js": [
+        "content/privacy.js"
       ],
       "run_at": "document_start"
     },
@@ -39,9 +51,9 @@
         "https://www.linkedin.com/*"
       ],
       "js": [
-        "cssContains.js",
-        "ai.js",
-        "content.js"
+        "content/cssContains.js",
+        "content/ai.js",
+        "content/content.js"
       ],
       "run_at": "document_idle"
     }
@@ -49,12 +61,12 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "probe.js",
-        "content.css",
-        "settings/*.json"
+        "content/probe.js",
+        "content/content.css",
+        "assets/settings/*.json"
       ],
       "matches": [
-        "https://www.linkedin.com/*"
+        "*://*.linkedin.com/*"
       ]
     }
   ]

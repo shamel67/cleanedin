@@ -1,16 +1,18 @@
-# CleanedIn
+# FeedSift
 
-**CleanedIn** helps you focus on what matters. By intelligently refining your LinkedIn feed, it highlights valuable insights while reducing distractions. Stay engaged with meaningful posts and protect your privacy. Get the best out of your network — on YOUR terms.
+**FeedSift** helps you find the signal and skip the noise. Refine your LinkedIn feed, hide distractions, protect your privacy, and stay focused on what matters to you.
+
+**Find the signal. Skip the noise.**
 
 [![Options](assets/options.png)](assets/options.png)
 ---
 
 ## ✨ Features
 
-- Filter AI-generated posts (experimental)
+- Opt-in formulaic-writing signal for posts that look heavily templated or AI-assisted
 - Privacy: prevent LinkedIn from probing for the presence of other extensions
 - Privacy: strip tracking parameters from shared links
-- Master switch: turn off, visually tone down the noise, or hide it completely
+- Hide checked distraction categories from the feed
 - Content filtering based on advanced rules (Premium, ads, news, games, suggestions, celebrations, etc.)
 - Highlight posts based on your own custom regex, using a color of your choice (unlimited number of rules)
 - Badge showing the "noise ratio" in your feed
@@ -26,7 +28,7 @@ Get it directly from the [Chrome Web Store](https://chromewebstore.google.com/de
 
 Development install:
 - on Github, click on the "<> Code" button and "Download ZIP", then unzip in a folder of your choice.
-- or do "npm install cleanedin" in a folder of your choice.
+- or do "npm install feedsift" in a folder of your choice.
 
 1. Type chrome://extensions in the Chrome URL bar and press enter.
 1. Enable developer mode using the toggle on the right
@@ -46,7 +48,7 @@ You may **not**:
 - Reuse any part of the code in other projects or products
 - Use it for commercial purposes
 
-See [`LICENSE`](./LICENSE) for details.
+See [`LICENSE.md`](./LICENSE.md) for details.
 
 ### Disclaimer
 
@@ -75,7 +77,7 @@ Contributions are welcome under strict terms.
 By submitting a pull request, you agree that:
 - Your code is original
 - You grant the project owner a non-exclusive, worldwide, royalty-free license to use and modify your contribution
-- Your contributions may be used in the CleanedIn project only
+- Your contributions may be used in the FeedSift project only
 
 Steps to contribute:
 1. Fork the repo

@@ -137,6 +137,23 @@ img.icon {
     color: #888;
     cursor: not-allowed;
 }
+.slider-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+.slider-container input[type="range"] {
+    flex: 1;
+    cursor: pointer;
+}
+
+.slider-value {
+    font-weight: bold;
+    min-width: 30px;
+    color: #0a66c2;
+}
 
 .custom-setting-item.single-row input[type="color"] {
     width: 32px;
@@ -163,34 +180,45 @@ img.icon {
 
 .add-custom-button {
     margin-top: 10px;
-    padding: 4px 10px;
-    font-size: 16px;
-    font-weight: bold;
+    padding: 6px 16px;
+    font-size: 13px;
+    font-weight: 500;
     color: #fff;
-    background-color: #0073b1;
+    background-color: #1a73e8;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    box-shadow: 0 1px 2px 0 rgba(60, 64, 67, .30), 0 1px 3px 1px rgba(60, 64, 67, .15);
+    transition: background-color 0.2s, box-shadow 0.2s;
 }
 
 .add-custom-button:hover {
-    background-color: #005f91;
+    background-color: #185abc;
+    box-shadow: 0 1px 2px 0 rgba(60, 64, 67, .30), 0 2px 6px 2px rgba(60, 64, 67, .15);
+}
+
+.add-custom-button:active {
+    background-color: #174ea6;
 }
 
 .remove-custom-button {
-    padding: 2px 8px;
-    font-size: 14px;
-    font-weight: bold;
-    color: #fff;
-    background-color: #d32727;
+    padding: 4px 8px;
+    font-size: 16px;
+    color: #5f6368;
+    background-color: transparent;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    vertical-align: middle;
+    line-height: 1;
+    transition: background-color 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .remove-custom-button:hover {
-    background-color: #a91e1e;
+    background-color: rgba(211, 39, 39, 0.1);
+    color: #d32727;
 }
 
 .settings-group.collapsed>.setting-item,
@@ -216,4 +244,38 @@ img.icon {
 
 .settings-group.collapsed .group-toggle::after {
     transform: rotate(-90deg);
+}
+
+/* ── Dev Tools Bar ─────────────────────────────────────────────────────────── */
+
+#devToolsBar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 6px;
+    padding: 8px 12px;
+    border: 1px dashed #d97706;
+    border-radius: 6px;
+    background: #fffbeb;
+    font-size: 12px;
+    color: #78350f;
+}
+
+#devToolsLabel {
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    flex-shrink: 0;
+}
+
+#inspectorToggleLabel {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    user-select: none;
+}
+
+#inspectorToggle {
+    accent-color: #d97706;
+    cursor: pointer;
 }
